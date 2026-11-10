@@ -1,0 +1,45 @@
+{
+  "name": "main_loo2",
+  "description": "Same experiment as main_loo2 (same name, so it reuses its trained models and fusion stage) plus gate ablations.",
+  "preprocess": {
+    "seed": 42,
+    "protocol": "loo2",
+    "raw": "data/raw/ml-1m"
+  },
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2026
+  ],
+  "models": {
+    "sasrec": {
+      "dim": 64,
+      "epochs": 50,
+      "eval_every": 1,
+      "patience": 3
+    },
+    "ngcf": {
+      "dim": 64,
+      "epochs": 400,
+      "eval_every": 5,
+      "patience": 4
+    },
+    "deepfm": {
+      "dim": 64,
+      "epochs": 30,
+      "neg": 4,
+      "eval_every": 1,
+      "patience": 3
+    }
+  },
+  "fusion": {
+    "norm": "z",
+    "hidden": 32,
+    "dropout": 0.1,
+    "epochs": 40,
+    "patience": 5
+  },
+  "ablations": "configs/ablations.json"
+}

@@ -1,0 +1,104 @@
+device mps
+ngcf epoch 1/400 loss=0.3518
+ngcf epoch 2/400 loss=0.3023
+ngcf epoch 3/400 loss=0.2973
+ngcf epoch 4/400 loss=0.2953
+ngcf epoch 5/400 loss=0.2940 val Recall@10=0.0563 NDCG@10=0.0277
+ngcf epoch 6/400 loss=0.2935
+ngcf epoch 7/400 loss=0.2922
+ngcf epoch 8/400 loss=0.2924
+ngcf epoch 9/400 loss=0.2913
+ngcf epoch 10/400 loss=0.2906 val Recall@10=0.0613 NDCG@10=0.0297
+ngcf epoch 11/400 loss=0.2907
+ngcf epoch 12/400 loss=0.2899
+ngcf epoch 13/400 loss=0.2887
+ngcf epoch 14/400 loss=0.2889
+ngcf epoch 15/400 loss=0.2887 val Recall@10=0.0603 NDCG@10=0.0292
+ngcf epoch 16/400 loss=0.2881
+ngcf epoch 17/400 loss=0.2873
+ngcf epoch 18/400 loss=0.2870
+ngcf epoch 19/400 loss=0.2856
+ngcf epoch 20/400 loss=0.2849 val Recall@10=0.0603 NDCG@10=0.0308
+ngcf epoch 21/400 loss=0.2834
+ngcf epoch 22/400 loss=0.2821
+ngcf epoch 23/400 loss=0.2801
+ngcf epoch 24/400 loss=0.2776
+ngcf epoch 25/400 loss=0.2749 val Recall@10=0.0616 NDCG@10=0.0313
+ngcf epoch 26/400 loss=0.2716
+ngcf epoch 27/400 loss=0.2675
+ngcf epoch 28/400 loss=0.2629
+ngcf epoch 29/400 loss=0.2567
+ngcf epoch 30/400 loss=0.2512 val Recall@10=0.0654 NDCG@10=0.0325
+ngcf epoch 31/400 loss=0.2449
+ngcf epoch 32/400 loss=0.2380
+ngcf epoch 33/400 loss=0.2313
+ngcf epoch 34/400 loss=0.2251
+ngcf epoch 35/400 loss=0.2194 val Recall@10=0.0728 NDCG@10=0.0358
+ngcf epoch 36/400 loss=0.2136
+ngcf epoch 37/400 loss=0.2082
+ngcf epoch 38/400 loss=0.2040
+ngcf epoch 39/400 loss=0.2001
+ngcf epoch 40/400 loss=0.1953 val Recall@10=0.0748 NDCG@10=0.0369
+ngcf epoch 41/400 loss=0.1933
+ngcf epoch 42/400 loss=0.1895
+ngcf epoch 43/400 loss=0.1863
+ngcf epoch 44/400 loss=0.1842
+ngcf epoch 45/400 loss=0.1811 val Recall@10=0.0776 NDCG@10=0.0382
+ngcf epoch 46/400 loss=0.1785
+ngcf epoch 47/400 loss=0.1763
+ngcf epoch 48/400 loss=0.1736
+ngcf epoch 49/400 loss=0.1719
+ngcf epoch 50/400 loss=0.1694 val Recall@10=0.0786 NDCG@10=0.0392
+ngcf epoch 51/400 loss=0.1683
+ngcf epoch 52/400 loss=0.1661
+ngcf epoch 53/400 loss=0.1637
+ngcf epoch 54/400 loss=0.1624
+ngcf epoch 55/400 loss=0.1604 val Recall@10=0.0810 NDCG@10=0.0400
+ngcf epoch 56/400 loss=0.1589
+ngcf epoch 57/400 loss=0.1573
+ngcf epoch 58/400 loss=0.1551
+ngcf epoch 59/400 loss=0.1533
+ngcf epoch 60/400 loss=0.1522 val Recall@10=0.0828 NDCG@10=0.0414
+ngcf epoch 61/400 loss=0.1506
+ngcf epoch 62/400 loss=0.1489
+ngcf epoch 63/400 loss=0.1472
+ngcf epoch 64/400 loss=0.1460
+ngcf epoch 65/400 loss=0.1444 val Recall@10=0.0831 NDCG@10=0.0420
+ngcf epoch 66/400 loss=0.1431
+ngcf epoch 67/400 loss=0.1417
+ngcf epoch 68/400 loss=0.1406
+ngcf epoch 69/400 loss=0.1384
+ngcf epoch 70/400 loss=0.1379 val Recall@10=0.0849 NDCG@10=0.0423
+ngcf epoch 71/400 loss=0.1357
+ngcf epoch 72/400 loss=0.1345
+ngcf epoch 73/400 loss=0.1332
+ngcf epoch 74/400 loss=0.1321
+ngcf epoch 75/400 loss=0.1308 val Recall@10=0.0884 NDCG@10=0.0433
+ngcf epoch 76/400 loss=0.1296
+ngcf epoch 77/400 loss=0.1287
+ngcf epoch 78/400 loss=0.1277
+ngcf epoch 79/400 loss=0.1270
+ngcf epoch 80/400 loss=0.1258 val Recall@10=0.0887 NDCG@10=0.0440
+ngcf epoch 81/400 loss=0.1241
+ngcf epoch 82/400 loss=0.1235
+ngcf epoch 83/400 loss=0.1226
+ngcf epoch 84/400 loss=0.1220
+ngcf epoch 85/400 loss=0.1206 val Recall@10=0.0894 NDCG@10=0.0438
+ngcf epoch 86/400 loss=0.1196
+ngcf epoch 87/400 loss=0.1193
+ngcf epoch 88/400 loss=0.1179
+ngcf epoch 89/400 loss=0.1175
+ngcf epoch 90/400 loss=0.1165 val Recall@10=0.0866 NDCG@10=0.0431
+ngcf epoch 91/400 loss=0.1157
+ngcf epoch 92/400 loss=0.1150
+ngcf epoch 93/400 loss=0.1142
+ngcf epoch 94/400 loss=0.1130
+ngcf epoch 95/400 loss=0.1131 val Recall@10=0.0863 NDCG@10=0.0427
+ngcf epoch 96/400 loss=0.1124
+ngcf epoch 97/400 loss=0.1112
+ngcf epoch 98/400 loss=0.1107
+ngcf epoch 99/400 loss=0.1098
+ngcf epoch 100/400 loss=0.1086 val Recall@10=0.0876 NDCG@10=0.0430 (early stop)
+best epoch 80 (val NDCG@10=0.0440)
+VALIDATION: {"Recall@10": 0.08874172185430464, "NDCG@10": 0.04400397030089724, "Recall@20": 0.15082781456953642, "NDCG@20": 0.05953512245150916}
+TEST: {"Recall@10": 0.08062913907284769, "NDCG@10": 0.04061024088296955, "Recall@20": 0.13460264900662253, "NDCG@20": 0.054072697229176875}

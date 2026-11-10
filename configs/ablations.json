@@ -1,0 +1,20 @@
+{
+  "description": "Gate ablations. Each variant overrides src.cand_gate arguments of the experiment's fusion config. Ordered by priority: the first four isolate the candidate-aware mechanism.",
+  "reference": "full",
+  "variants": [
+    {"name": "full",                "args": {}},
+    {"name": "no_item_features",    "args": {"drop_groups": ["item_pop", "item_genre"]},
+     "why": "candidate gate without item inputs: does item context matter beyond per-pair expert evidence?"},
+    {"name": "no_expert_features",  "args": {"drop_groups": ["expert"]},
+     "why": "gate cannot see per-pair scores/ranks/disagreement or per-user confidence"},
+    {"name": "rank_norm",           "args": {"norm": "rank"},
+     "why": "z-score vs rank normalization before fusion"},
+    {"name": "no_item_pop",         "args": {"drop_groups": ["item_pop"]}},
+    {"name": "no_user_history",     "args": {"drop_groups": ["user_history"]}},
+    {"name": "no_recency",          "args": {"drop_groups": ["recency"]}},
+    {"name": "no_deepfm",           "args": {"experts": ["sasrec", "ngcf"]}},
+    {"name": "no_sasrec",           "args": {"experts": ["deepfm", "ngcf"]}},
+    {"name": "no_ngcf",             "args": {"experts": ["deepfm", "sasrec"]}}
+  ],
+  "methods": ["best_single", "fixed_weights", "per_user_gate", "candidate_gate"]
+}

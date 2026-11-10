@@ -1,0 +1,20 @@
+best fixed weights {'deepfm': np.float64(0.1), 'sasrec': np.float64(0.8), 'ngcf': np.float64(0.1)}
+gate stopped after 53 epochs, early-stop CE=5.2166
+                        method  Recall@10  NDCG@10  Recall@20  NDCG@20  w_deepfm  w_sasrec  w_ngcf
+                        deepfm     0.0811   0.0386     0.1440   0.0543    1.0000    0.0000  0.0000
+                        sasrec     0.2967   0.1668     0.4151   0.1967    0.0000    1.0000  0.0000
+                          ngcf     0.0806   0.0406     0.1346   0.0541    0.0000    0.0000  1.0000
+                 equal_weights     0.2200   0.1189     0.3232   0.1447    0.3333    0.3333  0.3333
+            best_fixed_weights     0.3056   0.1752     0.4257   0.2056    0.1000    0.8000  0.1000
+               trifuserec_gate     0.3053   0.1761     0.4270   0.2069    0.1796    0.7335  0.0868
+oracle_any_model (upper bound)     0.3507      NaN        NaN      NaN       NaN       NaN     NaN
+
+correlation(feature, gate weight) on test:
+                     deepfm  sasrec  ngcf
+log_history_len        0.45   -0.58  0.51
+mean_log_popularity   -0.53    0.31  0.22
+niche_fraction         0.51   -0.28 -0.25
+recency_days           0.71   -0.80  0.54
+conf_deepfm           -0.30    0.14  0.19
+conf_sasrec           -0.11    0.16 -0.14
+conf_ngcf             -0.06    0.03  0.03

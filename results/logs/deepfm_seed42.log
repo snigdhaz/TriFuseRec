@@ -1,0 +1,18 @@
+device mps
+deepfm epoch 1/30 loss=0.3206 val Recall@10=0.0637 NDCG@10=0.0305
+deepfm epoch 2/30 loss=0.2765 val Recall@10=0.0705 NDCG@10=0.0344
+deepfm epoch 3/30 loss=0.2622 val Recall@10=0.0682 NDCG@10=0.0347
+deepfm epoch 4/30 loss=0.2518 val Recall@10=0.0798 NDCG@10=0.0386
+deepfm epoch 5/30 loss=0.2427 val Recall@10=0.0813 NDCG@10=0.0393
+deepfm epoch 6/30 loss=0.2345 val Recall@10=0.0896 NDCG@10=0.0429
+deepfm epoch 7/30 loss=0.2270 val Recall@10=0.0899 NDCG@10=0.0448
+deepfm epoch 8/30 loss=0.2203 val Recall@10=0.0877 NDCG@10=0.0429
+deepfm epoch 9/30 loss=0.2145 val Recall@10=0.0914 NDCG@10=0.0451
+deepfm epoch 10/30 loss=0.2093 val Recall@10=0.0902 NDCG@10=0.0440
+deepfm epoch 11/30 loss=0.2048 val Recall@10=0.0914 NDCG@10=0.0452
+deepfm epoch 12/30 loss=0.2014 val Recall@10=0.0906 NDCG@10=0.0444
+deepfm epoch 13/30 loss=0.1980 val Recall@10=0.0924 NDCG@10=0.0448
+deepfm epoch 14/30 loss=0.1955 val Recall@10=0.0927 NDCG@10=0.0450 (early stop)
+best epoch 11 (val NDCG@10=0.0452)
+VALIDATION: {"Recall@10": 0.0913907284768212, "NDCG@10": 0.04521650217521525, "Recall@20": 0.15695364238410597, "NDCG@20": 0.061660409716877786}
+TEST: {"Recall@10": 0.08112582781456953, "NDCG@10": 0.038570829128594206, "Recall@20": 0.14403973509933773, "NDCG@20": 0.05433020667764311}

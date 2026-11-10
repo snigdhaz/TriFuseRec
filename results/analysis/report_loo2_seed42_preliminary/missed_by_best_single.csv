@@ -1,0 +1,6 @@
+method,users,Recall@10 on users the best single model misses,Recall@10 on users it hits
+Best single,4248,0.0,1.0
+Equal weights,4248,0.08686440677966102,0.5357142857142857
+Fixed weights,4248,0.04731638418079096,0.91796875
+Per-user gate,4248,0.05790960451977401,0.89453125
+Candidate gate,4248,0.060969868173258,0.8984375

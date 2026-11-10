@@ -1,0 +1,59 @@
+{
+  "data": "data/processed",
+  "scores": "results/scores",
+  "score_seed": 42,
+  "out": "results/cand_gate/loo2_seed42",
+  "seed": 42,
+  "split_seed": 0,
+  "fit_fraction": 0.7,
+  "experts": [
+    "deepfm",
+    "sasrec",
+    "ngcf"
+  ],
+  "methods": [
+    "best_single",
+    "equal_weights",
+    "fixed_weights",
+    "per_user_gate",
+    "candidate_gate"
+  ],
+  "norm": "z",
+  "drop_groups": [],
+  "hidden": 32,
+  "dropout": 0.1,
+  "lr": 0.003,
+  "weight_decay": 1e-05,
+  "batch": 128,
+  "epochs": 40,
+  "patience": 5,
+  "hard_negatives": 50,
+  "random_negatives": 100,
+  "overwrite": false,
+  "protocol": "loo2",
+  "split_identity": "fb9ead0d9587",
+  "n_fit_users": 4228,
+  "n_select_users": 1812,
+  "data_stats": {
+    "users": 6040,
+    "items": 3416,
+    "train": 987531,
+    "valid": 6040,
+    "test": 6040,
+    "train_mean_history": 163.5,
+    "tie_break_seed": 42
+  },
+  "info": {
+    "best_single": "sasrec",
+    "per_user_gate": {
+      "best_epoch": 1,
+      "select_NDCG@10": 0.1960652296869656,
+      "n_features": 8
+    },
+    "candidate_gate": {
+      "best_epoch": 11,
+      "select_NDCG@10": 0.1967106697035622,
+      "n_features": 34
+    }
+  }
+}

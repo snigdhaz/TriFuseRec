@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# Full score matrices (~80MB each); regenerate with `python -m src.train --model X --eval-only`
+results/scores/
+runs/
+data/splits/

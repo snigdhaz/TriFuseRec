@@ -1,0 +1,12 @@
+device mps
+sasrec epoch 1/50 loss=6.2032 val Recall@10=0.2679 NDCG@10=0.1442
+sasrec epoch 2/50 loss=5.6584 val Recall@10=0.2902 NDCG@10=0.1544
+sasrec epoch 3/50 loss=5.5697 val Recall@10=0.3068 NDCG@10=0.1656
+sasrec epoch 4/50 loss=5.5235 val Recall@10=0.3063 NDCG@10=0.1666
+sasrec epoch 5/50 loss=5.4917 val Recall@10=0.3136 NDCG@10=0.1730
+sasrec epoch 6/50 loss=5.4686 val Recall@10=0.3113 NDCG@10=0.1691
+sasrec epoch 7/50 loss=5.4507 val Recall@10=0.3103 NDCG@10=0.1700
+sasrec epoch 8/50 loss=5.4359 val Recall@10=0.3157 NDCG@10=0.1721 (early stop)
+best epoch 5 (val NDCG@10=0.1730)
+VALIDATION: {"Recall@10": 0.31357615894039736, "NDCG@10": 0.17301606246338713, "Recall@20": 0.4379139072847682, "NDCG@20": 0.20451195153660567}
+TEST: {"Recall@10": 0.29668874172185433, "NDCG@10": 0.1667730389024403, "Recall@20": 0.4150662251655629, "NDCG@20": 0.19672031544564728}

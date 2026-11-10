@@ -19,12 +19,36 @@ def read_data(path):
     n_users=int(pd.read_csv(path/'user_map.csv').shape[0])
     n_items=int(pd.read_csv(path/'item_map.csv').shape[0])
     histories=[[] for _ in range(n_users)]
-    for r in train.sort_values(['user_idx','timestamp','item_idx']).itertuples():
+    # `seq` is the chronological order fixed in preprocessing (v2+: timestamp ties broken
+    # randomly). v1 splits have no `seq`; fall back to their original item-id tie-break so
+    # archived results stay reproducible.
+    order=['user_idx','seq'] if 'seq' in train.columns else ['user_idx','timestamp','item_idx']
+    for r in train.sort_values(order).itertuples():
         histories[int(r.user_idx)].append(int(r.item_idx))
     val_items=valid.sort_values('user_idx').item_idx.to_numpy(dtype=np.int64)
     test_items=test.sort_values('user_idx').item_idx.to_numpy(dtype=np.int64)
     assert len(val_items)==len(test_items)==n_users
     return train,histories,val_items,test_items,n_users,n_items
+
+
+HELDOUT_FILES=(('fusion','fusion.csv'),('validation','valid.csv'),('test','test.csv'))
+
+
+def heldout_splits(path, histories):
+    """{split: (history, target_items)} in chronological order.
+
+    Each split's history is train + every EARLIER held-out item of that user, so
+    all models see exactly the same history and rank the same candidate set
+    (all items minus that history). `fusion` exists only for protocol loo3.
+    """
+    path=Path(path);out={};hist=[list(h) for h in histories]
+    for name,fname in HELDOUT_FILES:
+        if not (path/fname).exists(): continue
+        items=pd.read_csv(path/fname).sort_values('user_idx').item_idx.to_numpy(dtype=np.int64)
+        assert len(items)==len(hist)
+        out[name]=(hist,items)
+        hist=[h+[int(i)] for h,i in zip(hist,items)]
+    return out
 
 
 def negative_samples(train, n_items, n_neg, seed):
@@ -34,16 +58,26 @@ def negative_samples(train, n_items, n_neg, seed):
     for train-only baseline this uses train positives and may sample held-outs at low rate.
     """
     rng=np.random.default_rng(seed)
-    seen=train.groupby('user_idx').item_idx.apply(set).to_dict()
-    us=[]; it=[]; labels=[]
-    for u,i in train[['user_idx','item_idx']].itertuples(index=False,name=None):
-        u=int(u); i=int(i)
-        us.append(u); it.append(i); labels.append(1.)
-        for _ in range(n_neg):
-            j=int(rng.integers(n_items))
-            while j in seen[u]: j=int(rng.integers(n_items))
-            us.append(u);it.append(j);labels.append(0.)
-    return np.array(us), np.array(it), np.array(labels,dtype=np.float32)
+    u=train.user_idx.to_numpy(np.int64);i=train.item_idx.to_numpy(np.int64)
+    neg_u=np.repeat(u,n_neg);neg_i=sample_unseen(neg_u,seen_matrix(train,n_items),rng)
+    return (np.concatenate([u,neg_u]),np.concatenate([i,neg_i]),
+            np.concatenate([np.ones(len(u)),np.zeros(len(neg_u))]).astype(np.float32))
+
+
+def seen_matrix(train, n_items):
+    seen=np.zeros((int(train.user_idx.max())+1,n_items),dtype=bool)
+    seen[train.user_idx.to_numpy(),train.item_idx.to_numpy()]=True
+    return seen
+
+
+def sample_unseen(users, seen, rng):
+    """One uniformly random item per entry of `users` that the user has not interacted with."""
+    j=rng.integers(seen.shape[1],size=len(users))
+    bad=seen[users,j]
+    while bad.any():
+        j[bad]=rng.integers(seen.shape[1],size=int(bad.sum()))
+        bad=seen[users,j]
+    return j
 
 
 def rank_metrics(scores, truths, seen, ks=(10,20)):

@@ -1,0 +1,27 @@
+Mean gate weight by history length:
+         w_deepfm  w_sasrec  w_ngcf
+group                              
+<50         0.137     0.817   0.045
+50-99       0.155     0.764   0.081
+100-199     0.184     0.708   0.108
+200-499     0.229     0.652   0.119
+500+        0.294     0.578   0.128
+
+Recall@10 by history length:
+history_len           <50  50-99  100-199  200-499   500+
+method                                                   
+best_fixed_weights 0.3653 0.3376   0.2752   0.2511 0.1924
+deepfm             0.1331 0.0876   0.0496   0.0465 0.0329
+equal_weights      0.2790 0.2485   0.1827   0.1699 0.1316
+ngcf               0.1314 0.0719   0.0556   0.0549 0.0405
+sasrec             0.3636 0.3219   0.2639   0.2358 0.2000
+trifuserec_gate    0.3669 0.3436   0.2759   0.2401 0.1899
+
+Beyond accuracy:
+            method  Recall@10  coverage@10  ILD@10  mean_pop_percentile  long_tail_share
+            deepfm     0.0811       0.6446  0.7239               0.8961           0.1637
+            sasrec     0.2967       0.6431  0.6359               0.8431           0.2886
+              ngcf     0.0806       0.5126  0.7052               0.9248           0.1013
+     equal_weights     0.2200       0.5787  0.6960               0.9092           0.1429
+best_fixed_weights     0.3056       0.6253  0.6472               0.8603           0.2515
+   trifuserec_gate     0.3053       0.6291  0.6556               0.8654           0.2394

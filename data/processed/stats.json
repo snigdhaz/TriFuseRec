@@ -4,5 +4,6 @@
   "train": 987531,
   "valid": 6040,
   "test": 6040,
-  "train_mean_history": 163.5
+  "train_mean_history": 163.5,
+  "tie_break_seed": 42
 }
