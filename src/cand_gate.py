@@ -21,7 +21,7 @@ scores — never from held-out labels or held-out timestamps):
   user_history  log history length, mean log popularity of history, long-tail share
   recency       log gap between the user's last two HISTORY events, log activity rate
   item_pop      log train popularity of the candidate
-  item_genre    18 genre indicators of the candidate
+  item_genre    18 genre indicators of the candidate (Amazon Beauty: 6 sub-category indicators)
   expert        per expert: clipped z-score, within-user log-rank, per-user confidence
                 (top-1 minus top-10 z); plus cross-expert disagreement (rank std)
 
@@ -35,6 +35,7 @@ uniform unseen items re-sampled every epoch. Hard negatives matter because top-1
 ranking is decided among items the experts already rank highly.
 """
 import argparse
+import gc
 import hashlib
 import json
 from itertools import product
@@ -78,6 +79,24 @@ def history_times(data,train):
     return out
 
 
+def item_categories(data,n_items):
+    """[items, C] category indicators for the `item_genre` feature group.
+    ML-1M: 18 movie genres (movies.csv). Amazon Beauty: one-hot of the 6 product
+    sub-categories (items.csv `subcategory`; items without metadata get all zeros)."""
+    data=Path(data)
+    if (data/'movies.csv').exists():
+        df=pd.read_csv(data/'movies.csv').dropna(subset=['item_idx'])
+        rows=[(int(r.item_idx),r.genres.split('|')) for r in df.itertuples()]
+    else:
+        df=pd.read_csv(data/'items.csv')
+        rows=[(int(r.item_idx),[r.subcategory]) for r in df.itertuples() if isinstance(r.subcategory,str) and r.subcategory]
+    names=sorted({g for _,gs in rows for g in gs});k={g:j for j,g in enumerate(names)}
+    out=np.zeros((n_items,len(names)),dtype=np.float32)
+    for i,gs in rows:
+        for g in gs: out[i,k[g]]=1
+    return out
+
+
 def user_features(hist,times,logpop,niche):
     """[users, 5]: user_history (3) + recency (2). Uses history only — never the target."""
     first,prev,last=times
@@ -105,17 +124,22 @@ def log_ranks(z):
 
 class View:
     """Expert evidence for one held-out split: z [U,E,I], log-rank [U,E,I], seen, features."""
-    def __init__(self,name,hist,truth,times,score_files,logpop,niche,hard_k):
+    def __init__(self,name,hist,truth,times,score_files,logpop,niche,hard_k,chunk=2048):
         self.name=name;self.hist=hist;self.truth=truth
         nu=len(hist);self.seen=np.zeros((nu,len(logpop)),dtype=bool)
         for u,h in enumerate(hist): self.seen[u,h]=True
-        zs=[];lrs=[];hard=[]
-        for f in score_files:
-            z=normalize(np.load(f),self.seen);lr,order=log_ranks(z)
-            zs.append(z);lrs.append(lr.astype(np.float16));hard.append(order[:,:hard_k])
-        self.z=np.stack(zs,1);self.lr=np.stack(lrs,1);self.hard=np.stack(hard,1)
-        top=-np.sort(-self.z,axis=2)[:,:,:10]
-        self.conf=(top[:,:,0]-top[:,:,9]).astype(np.float32)
+        # Filled per expert and per block of users: every step is row-wise, so the result is
+        # identical to processing whole matrices, but peak memory stays near the output size
+        # (needed for Amazon Beauty: 22k users x 12k items x 3 experts).
+        E,ni=len(score_files),len(logpop)
+        self.z=np.empty((nu,E,ni),dtype=np.float32);self.lr=np.empty((nu,E,ni),dtype=np.float16)
+        self.hard=np.empty((nu,E,hard_k),dtype=np.int64);self.conf=np.empty((nu,E),dtype=np.float32)
+        for e,f in enumerate(score_files):
+            raw=np.load(f,mmap_mode='r')
+            for s in range(0,nu,chunk):
+                z=normalize(np.asarray(raw[s:s+chunk]),self.seen[s:s+chunk]);lr,order=log_ranks(z)
+                self.z[s:s+chunk,e]=z;self.lr[s:s+chunk,e]=lr;self.hard[s:s+chunk,e]=order[:,:hard_k]
+                top=-np.sort(-z,axis=1)[:,:10];self.conf[s:s+chunk,e]=top[:,0]-top[:,9]
         self.user_x=user_features(hist,times,logpop,niche)
 
 
@@ -264,11 +288,7 @@ def run(args):
     splits=heldout_splits(args.data,histories);times=history_times(args.data,tr)
     pop=np.bincount(tr.item_idx.to_numpy(),minlength=ni).astype(np.float64)
     logpop=np.log1p(pop);niche=pop<np.quantile(pop,.8)
-    movies=pd.read_csv(Path(args.data)/'movies.csv')
-    names=sorted({g for gs in movies.genres for g in gs.split('|')});col={g:k for k,g in enumerate(names)}
-    genre=np.zeros((ni,len(names)),dtype=np.float32)
-    for r in movies.itertuples():
-        for g in r.genres.split('|'): genre[int(r.item_idx),col[g]]=1
+    genre=item_categories(args.data,ni)
     item_pop=((logpop-logpop.mean())/logpop.std()).astype(np.float32)
 
     protocol='loo3' if 'fusion' in splits else 'loo2'
@@ -282,7 +302,7 @@ def run(args):
         v_fit=v_sel=view('validation')
         perm=np.random.default_rng(args.split_seed).permutation(nu);cut=int(args.fit_fraction*nu)
         fit_users=np.sort(perm[:cut]);sel_users=np.sort(perm[cut:])
-    v_test=view('test');test_users=np.arange(nu)
+    test_users=np.arange(nu)
     ux=v_fit.user_x[fit_users];mu=ux.mean(0).astype(np.float32);sd=(ux.std(0)+1e-6).astype(np.float32)
 
     def make_fuser(mode,groups=None):
@@ -293,7 +313,7 @@ def run(args):
         return view.z[users] if args.norm=='z' else np.where(view.z[users]<=MASKED/2,MASKED,-view.lr[users].astype(np.float32))
 
     sel_truth=v_sel.truth[sel_users];sel_hist=[v_sel.hist[u] for u in sel_users]
-    test_hist=v_test.hist;test_truth=v_test.truth
+    test_hist,test_truth=splits['test']
     weights={};gates={};log=[];info={}
     if 'best_single' in args.methods:
         sel=[ndcg_at(s_hat(v_sel,sel_users)[:,k],sel_truth,sel_hist) for k in range(E)]
@@ -309,11 +329,14 @@ def run(args):
                     'groups':sorted(fz.groups),'user_mu':mu,'user_sd':sd,'hidden':args.hidden,'dropout':args.dropout},
                    out/f'gate_{mode}.pt')
 
-    rows=[];npz={'truth':test_truth,'history_len':np.array([len(h) for h in test_hist]),
+    # Evaluate one split at a time and free its expert evidence before loading the next,
+    # so only one split's [users, experts, items] arrays are in memory (the test view is
+    # built only after selection is scored). Evaluation uses no randomness, so results are
+    # identical to scoring both splits together; needed for large catalogs (Amazon Beauty).
+    rows={};npz={'truth':test_truth,'history_len':np.array([len(h) for h in test_hist]),
                  'target_popularity':pop[test_truth]}
-    for name in args.methods:
-        for split,view_,users,truth,hist in (('select',v_sel,sel_users,sel_truth,sel_hist),
-                                              ('test',v_test,test_users,test_truth,test_hist)):
+    def evaluate(split,view_,users,truth,hist):
+        for name in args.methods:
             if name in weights: sc=np.einsum('e,uei->ui',weights[name],s_hat(view_,users))
             else: sc=full_scores(*gates[name],view_,users)
             m,top=rank_metrics(sc,truth,hist)
@@ -324,11 +347,17 @@ def run(args):
                 npz[f'top20_{name}']=top
                 if name in gates:
                     fz,gate=gates[name]
-                    w_top=np.concatenate([weights_for(fz,gate,v_test,test_users[s:s+256],top[s:s+256,:10]) for s in range(0,nu,256)])
-                    w_tgt=np.concatenate([weights_for(fz,gate,v_test,test_users[s:s+256],test_truth[s:s+256,None]) for s in range(0,nu,256)])[:,0]
+                    w_top=np.concatenate([weights_for(fz,gate,view_,users[s:s+256],top[s:s+256,:10]) for s in range(0,nu,256)])
+                    w_tgt=np.concatenate([weights_for(fz,gate,view_,users[s:s+256],truth[s:s+256,None]) for s in range(0,nu,256)])[:,0]
                     npz[f'weights_top10_{name}']=w_top.astype(np.float16);npz[f'weights_target_{name}']=w_tgt
                     row.update({f'w_{e}':float(w_top[:,:,k].mean()) for k,e in enumerate(experts)})
-            rows.append(row)
+            rows[(name,split)]=row
+    evaluate('select',v_sel,sel_users,sel_truth,sel_hist)
+    del v_fit,v_sel;gc.collect()
+    v_test=view('test')
+    evaluate('test',v_test,test_users,test_truth,test_hist)
+    del v_test;gc.collect()
+    rows=[rows[(name,split)] for name in args.methods for split in ('select','test')]
     res=pd.DataFrame(rows)
     res.to_csv(out/'metrics.csv',index=False)
     pd.DataFrame(log).to_csv(out/'gate_training_log.csv',index=False)

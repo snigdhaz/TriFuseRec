@@ -80,24 +80,30 @@ def sample_unseen(users, seen, rng):
     return j
 
 
-def rank_metrics(scores, truths, seen, ks=(10,20)):
+def rank_metrics(scores, truths, seen, ks=(10,20), chunk=2048):
     """scores [users,items], truth [users], seen list of sets/lists to exclude.
 
-    Every held-out target must remain an eligible candidate.
+    Every held-out target must remain an eligible candidate. Users are ranked in
+    chunks so large catalogs (e.g. Amazon Beauty, 22k x 12k) fit in memory.
     """
-    scores=np.array(scores,copy=True)
-    n_users,n_items=scores.shape
+    n_users,n_items=np.shape(scores)
+    truths=np.asarray(truths)
     assert len(truths)==len(seen)==n_users
-    for u,items in enumerate(seen):
-        if int(truths[u]) in items:
-            raise ValueError(f'Target movie is in masked history for user {u}')
-        scores[u,list(items)]=-np.inf
     max_k=min(max(ks),n_items)
-    # Full ranking is feasible for ML-1M and has deterministic tie handling.
-    order=np.argsort(-scores,axis=1,kind='stable')[:,:max_k]
+    order=np.empty((n_users,max_k),dtype=np.int64)
+    for start in range(0,n_users,chunk):
+        end=min(start+chunk,n_users)
+        block=np.array(scores[start:end],copy=True)
+        for row,u in enumerate(range(start,end)):
+            items=seen[u]
+            if int(truths[u]) in items:
+                raise ValueError(f'Target item is in masked history for user {u}')
+            block[row,list(items)]=-np.inf
+        # Full stable sort keeps deterministic tie handling.
+        order[start:end]=np.argsort(-block,axis=1,kind='stable')[:,:max_k]
     metrics={}
     for k in ks:
-        matches=(order[:,:min(k,n_items)]==np.asarray(truths)[:,None])
+        matches=(order[:,:min(k,n_items)]==truths[:,None])
         hits=matches.any(axis=1)
         ranks=np.argmax(matches,axis=1)+1
         ndcg=np.where(hits,1.0/np.log2(ranks+1),0.)
