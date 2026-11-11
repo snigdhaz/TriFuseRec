@@ -5,3 +5,6 @@ __pycache__/
 results/scores/
 runs/
 data/splits/
+
+# SASRec replication resume checkpoints
+results/sasrec_paper/*_ckpt.pt
