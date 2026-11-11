@@ -16,3 +16,6 @@ results/beauty/scores/
 results/beauty/cand_gate/*/scores/
 # Colab results downloads
 beauty_results*.zip
+
+# SASRec replication resume checkpoints
+results/sasrec_paper/*_ckpt.pt
