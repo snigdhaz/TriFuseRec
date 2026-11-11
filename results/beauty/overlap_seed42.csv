@@ -1,0 +1,9 @@
+correct_models,users
+none,19430
+deepfm,346
+sasrec,1175
+deepfm+sasrec,219
+ngcf,400
+deepfm+ngcf,81
+sasrec+ngcf,459
+deepfm+sasrec+ngcf,253

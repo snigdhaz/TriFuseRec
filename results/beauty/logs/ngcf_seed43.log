@@ -1,0 +1,60 @@
+device cuda
+  return torch.sparse_coo_tensor(torch.stack([src,dst]),values,(n,n)).coalesce()
+ngcf epoch 1/100 loss=0.4714
+ngcf epoch 2/100 loss=0.3343
+ngcf epoch 3/100 loss=0.3008
+ngcf epoch 4/100 loss=0.2846
+ngcf epoch 5/100 loss=0.2756 val Recall@10=0.0349 NDCG@10=0.0178
+ngcf epoch 6/100 loss=0.2693
+ngcf epoch 7/100 loss=0.2650
+ngcf epoch 8/100 loss=0.2613
+ngcf epoch 9/100 loss=0.2588
+ngcf epoch 10/100 loss=0.2568 val Recall@10=0.0368 NDCG@10=0.0192
+ngcf epoch 11/100 loss=0.2540
+ngcf epoch 12/100 loss=0.2524
+ngcf epoch 13/100 loss=0.2514
+ngcf epoch 14/100 loss=0.2495
+ngcf epoch 15/100 loss=0.2479 val Recall@10=0.0415 NDCG@10=0.0214
+ngcf epoch 16/100 loss=0.2464
+ngcf epoch 17/100 loss=0.2458
+ngcf epoch 18/100 loss=0.2452
+ngcf epoch 19/100 loss=0.2436
+ngcf epoch 20/100 loss=0.2433 val Recall@10=0.0451 NDCG@10=0.0231
+ngcf epoch 21/100 loss=0.2425
+ngcf epoch 22/100 loss=0.2419
+ngcf epoch 23/100 loss=0.2412
+ngcf epoch 24/100 loss=0.2409
+ngcf epoch 25/100 loss=0.2408 val Recall@10=0.0465 NDCG@10=0.0233
+ngcf epoch 26/100 loss=0.2389
+ngcf epoch 27/100 loss=0.2388
+ngcf epoch 28/100 loss=0.2383
+ngcf epoch 29/100 loss=0.2378
+ngcf epoch 30/100 loss=0.2371 val Recall@10=0.0469 NDCG@10=0.0239
+ngcf epoch 31/100 loss=0.2377
+ngcf epoch 32/100 loss=0.2365
+ngcf epoch 33/100 loss=0.2369
+ngcf epoch 34/100 loss=0.2363
+ngcf epoch 35/100 loss=0.2358 val Recall@10=0.0474 NDCG@10=0.0242
+ngcf epoch 36/100 loss=0.2344
+ngcf epoch 37/100 loss=0.2350
+ngcf epoch 38/100 loss=0.2352
+ngcf epoch 39/100 loss=0.2347
+ngcf epoch 40/100 loss=0.2346 val Recall@10=0.0500 NDCG@10=0.0251
+ngcf epoch 41/100 loss=0.2342
+ngcf epoch 42/100 loss=0.2336
+ngcf epoch 43/100 loss=0.2334
+ngcf epoch 44/100 loss=0.2332
+ngcf epoch 45/100 loss=0.2328 val Recall@10=0.0487 NDCG@10=0.0248
+ngcf epoch 46/100 loss=0.2323
+ngcf epoch 47/100 loss=0.2327
+ngcf epoch 48/100 loss=0.2324
+ngcf epoch 49/100 loss=0.2323
+ngcf epoch 50/100 loss=0.2321 val Recall@10=0.0489 NDCG@10=0.0242
+ngcf epoch 51/100 loss=0.2319
+ngcf epoch 52/100 loss=0.2317
+ngcf epoch 53/100 loss=0.2311
+ngcf epoch 54/100 loss=0.2310
+ngcf epoch 55/100 loss=0.2306 val Recall@10=0.0491 NDCG@10=0.0249 (early stop)
+best epoch 40 (val NDCG@10=0.0251)
+VALIDATION: {"Recall@10": 0.05003800921164423, "NDCG@10": 0.025086346580357397, "Recall@20": 0.0758842731297232, "NDCG@20": 0.0315697478826572}
+TEST: {"Recall@10": 0.03867996243795555, "NDCG@10": 0.019451362254519756, "Recall@20": 0.061664356302821625, "NDCG@20": 0.02520386423511905}

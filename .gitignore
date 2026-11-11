@@ -14,3 +14,5 @@ colab/*.zip
 # Full Beauty score matrices (~1 GB each); regenerate with `python -m src.train --dataset beauty --model X --eval-only`
 results/beauty/scores/
 results/beauty/cand_gate/*/scores/
+# Colab results downloads
+beauty_results*.zip

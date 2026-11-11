@@ -1,0 +1,24 @@
+protocol=loo2 experts=('deepfm', 'sasrec', 'ngcf') mode(s)=['best_single', 'equal_weights', 'fixed_weights', 'per_user_gate', 'candidate_gate'] norm=z
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  opt.zero_grad();loss.backward();opt.step();losses.append(float(loss))
+  user gate epoch 1 loss=5.5316 select NDCG@10=0.0529
+  user gate epoch 2 loss=5.4526 select NDCG@10=0.0542
+  user gate epoch 3 loss=5.4264 select NDCG@10=0.0566
+  user gate epoch 4 loss=5.4150 select NDCG@10=0.0563
+  user gate epoch 5 loss=5.4097 select NDCG@10=0.0561
+  user gate epoch 6 loss=5.4081 select NDCG@10=0.0546
+  user gate epoch 7 loss=5.4073 select NDCG@10=0.0558
+  user gate epoch 8 loss=5.4070 select NDCG@10=0.0549
+  candidate gate epoch 1 loss=5.5161 select NDCG@10=0.0489
+  candidate gate epoch 2 loss=5.4085 select NDCG@10=0.0529
+  candidate gate epoch 3 loss=5.3663 select NDCG@10=0.0523
+  candidate gate epoch 4 loss=5.3496 select NDCG@10=0.0523
+  candidate gate epoch 5 loss=5.3367 select NDCG@10=0.0500
+  candidate gate epoch 6 loss=5.3187 select NDCG@10=0.0455
+  candidate gate epoch 7 loss=5.2979 select NDCG@10=0.0462
+        method  Recall@10  NDCG@10  Recall@20  NDCG@20 norm            experts drop_groups  w_deepfm  w_sasrec  w_ngcf
+   best_single     0.0786   0.0446     0.1114   0.0529    z deepfm+sasrec+ngcf        none    0.0000    1.0000  0.0000
+ equal_weights     0.0783   0.0439     0.1153   0.0532    z deepfm+sasrec+ngcf        none    0.3333    0.3333  0.3333
+ fixed_weights     0.0794   0.0447     0.1165   0.0540    z deepfm+sasrec+ngcf        none    0.3000    0.4000  0.3000
+ per_user_gate     0.0771   0.0433     0.1124   0.0522    z deepfm+sasrec+ngcf        none    0.7135    0.2620  0.0246
+candidate_gate     0.0726   0.0403     0.1062   0.0487    z deepfm+sasrec+ngcf        none    0.5756    0.4068  0.0176

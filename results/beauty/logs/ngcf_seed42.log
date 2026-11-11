@@ -1,0 +1,105 @@
+device cuda
+  return torch.sparse_coo_tensor(torch.stack([src,dst]),values,(n,n)).coalesce()
+ngcf epoch 1/100 loss=0.4732
+ngcf epoch 2/100 loss=0.3380
+ngcf epoch 3/100 loss=0.3036
+ngcf epoch 4/100 loss=0.2874
+ngcf epoch 5/100 loss=0.2773 val Recall@10=0.0349 NDCG@10=0.0176
+ngcf epoch 6/100 loss=0.2722
+ngcf epoch 7/100 loss=0.2668
+ngcf epoch 8/100 loss=0.2625
+ngcf epoch 9/100 loss=0.2591
+ngcf epoch 10/100 loss=0.2570 val Recall@10=0.0399 NDCG@10=0.0204
+ngcf epoch 11/100 loss=0.2554
+ngcf epoch 12/100 loss=0.2532
+ngcf epoch 13/100 loss=0.2517
+ngcf epoch 14/100 loss=0.2503
+ngcf epoch 15/100 loss=0.2482 val Recall@10=0.0414 NDCG@10=0.0213
+ngcf epoch 16/100 loss=0.2476
+ngcf epoch 17/100 loss=0.2471
+ngcf epoch 18/100 loss=0.2455
+ngcf epoch 19/100 loss=0.2440
+ngcf epoch 20/100 loss=0.2434 val Recall@10=0.0443 NDCG@10=0.0225
+ngcf epoch 21/100 loss=0.2424
+ngcf epoch 22/100 loss=0.2420
+ngcf epoch 23/100 loss=0.2406
+ngcf epoch 24/100 loss=0.2401
+ngcf epoch 25/100 loss=0.2400 val Recall@10=0.0454 NDCG@10=0.0231
+ngcf epoch 26/100 loss=0.2394
+ngcf epoch 27/100 loss=0.2394
+ngcf epoch 28/100 loss=0.2393
+ngcf epoch 29/100 loss=0.2382
+ngcf epoch 30/100 loss=0.2378 val Recall@10=0.0458 NDCG@10=0.0237
+ngcf epoch 31/100 loss=0.2373
+ngcf epoch 32/100 loss=0.2367
+ngcf epoch 33/100 loss=0.2363
+ngcf epoch 34/100 loss=0.2361
+ngcf epoch 35/100 loss=0.2361 val Recall@10=0.0468 NDCG@10=0.0236
+ngcf epoch 36/100 loss=0.2351
+ngcf epoch 37/100 loss=0.2354
+ngcf epoch 38/100 loss=0.2349
+ngcf epoch 39/100 loss=0.2355
+ngcf epoch 40/100 loss=0.2339 val Recall@10=0.0467 NDCG@10=0.0240
+ngcf epoch 41/100 loss=0.2341
+ngcf epoch 42/100 loss=0.2342
+ngcf epoch 43/100 loss=0.2340
+ngcf epoch 44/100 loss=0.2332
+ngcf epoch 45/100 loss=0.2332 val Recall@10=0.0471 NDCG@10=0.0240
+ngcf epoch 46/100 loss=0.2323
+ngcf epoch 47/100 loss=0.2325
+ngcf epoch 48/100 loss=0.2327
+ngcf epoch 49/100 loss=0.2321
+ngcf epoch 50/100 loss=0.2326 val Recall@10=0.0472 NDCG@10=0.0247
+ngcf epoch 51/100 loss=0.2316
+ngcf epoch 52/100 loss=0.2318
+ngcf epoch 53/100 loss=0.2321
+ngcf epoch 54/100 loss=0.2317
+ngcf epoch 55/100 loss=0.2311 val Recall@10=0.0492 NDCG@10=0.0257
+ngcf epoch 56/100 loss=0.2313
+ngcf epoch 57/100 loss=0.2310
+ngcf epoch 58/100 loss=0.2304
+ngcf epoch 59/100 loss=0.2306
+ngcf epoch 60/100 loss=0.2310 val Recall@10=0.0484 NDCG@10=0.0251
+ngcf epoch 61/100 loss=0.2305
+ngcf epoch 62/100 loss=0.2301
+ngcf epoch 63/100 loss=0.2299
+ngcf epoch 64/100 loss=0.2300
+ngcf epoch 65/100 loss=0.2294 val Recall@10=0.0495 NDCG@10=0.0263
+ngcf epoch 66/100 loss=0.2295
+ngcf epoch 67/100 loss=0.2301
+ngcf epoch 68/100 loss=0.2292
+ngcf epoch 69/100 loss=0.2289
+ngcf epoch 70/100 loss=0.2289 val Recall@10=0.0503 NDCG@10=0.0258
+ngcf epoch 71/100 loss=0.2290
+ngcf epoch 72/100 loss=0.2276
+ngcf epoch 73/100 loss=0.2282
+ngcf epoch 74/100 loss=0.2287
+ngcf epoch 75/100 loss=0.2283 val Recall@10=0.0517 NDCG@10=0.0268
+ngcf epoch 76/100 loss=0.2284
+ngcf epoch 77/100 loss=0.2281
+ngcf epoch 78/100 loss=0.2283
+ngcf epoch 79/100 loss=0.2276
+ngcf epoch 80/100 loss=0.2280 val Recall@10=0.0514 NDCG@10=0.0266
+ngcf epoch 81/100 loss=0.2271
+ngcf epoch 82/100 loss=0.2278
+ngcf epoch 83/100 loss=0.2271
+ngcf epoch 84/100 loss=0.2271
+ngcf epoch 85/100 loss=0.2268 val Recall@10=0.0516 NDCG@10=0.0269
+ngcf epoch 86/100 loss=0.2264
+ngcf epoch 87/100 loss=0.2267
+ngcf epoch 88/100 loss=0.2267
+ngcf epoch 89/100 loss=0.2259
+ngcf epoch 90/100 loss=0.2265 val Recall@10=0.0531 NDCG@10=0.0274
+ngcf epoch 91/100 loss=0.2259
+ngcf epoch 92/100 loss=0.2254
+ngcf epoch 93/100 loss=0.2258
+ngcf epoch 94/100 loss=0.2253
+ngcf epoch 95/100 loss=0.2253 val Recall@10=0.0530 NDCG@10=0.0278
+ngcf epoch 96/100 loss=0.2256
+ngcf epoch 97/100 loss=0.2253
+ngcf epoch 98/100 loss=0.2254
+ngcf epoch 99/100 loss=0.2254
+ngcf epoch 100/100 loss=0.2246 val Recall@10=0.0533 NDCG@10=0.0279
+best epoch 100 (val NDCG@10=0.0279)
+VALIDATION: {"Recall@10": 0.05334704646067164, "NDCG@10": 0.027860855306465503, "Recall@20": 0.08201046371238206, "NDCG@20": 0.035046579152284464}
+TEST: {"Recall@10": 0.04230201672405312, "NDCG@10": 0.02179694329927007, "Recall@20": 0.06680677905468854, "NDCG@20": 0.02793903887597406}

@@ -1,0 +1,16 @@
+device cuda
+deepfm epoch 1/20 loss=0.4698
+deepfm epoch 2/20 loss=0.3895 val Recall@10=0.0345 NDCG@10=0.0174
+deepfm epoch 3/20 loss=0.3444
+deepfm epoch 4/20 loss=0.3075 val Recall@10=0.0392 NDCG@10=0.0196
+deepfm epoch 5/20 loss=0.2752
+deepfm epoch 6/20 loss=0.2464 val Recall@10=0.0392 NDCG@10=0.0192
+deepfm epoch 7/20 loss=0.2216
+deepfm epoch 8/20 loss=0.2043 val Recall@10=0.0407 NDCG@10=0.0209
+deepfm epoch 9/20 loss=0.1882
+deepfm epoch 10/20 loss=0.1762 val Recall@10=0.0397 NDCG@10=0.0203
+deepfm epoch 11/20 loss=0.1667
+deepfm epoch 12/20 loss=0.1570 val Recall@10=0.0389 NDCG@10=0.0203 (early stop)
+best epoch 8 (val NDCG@10=0.0209)
+VALIDATION: {"Recall@10": 0.04069221481912087, "NDCG@10": 0.020893533512661273, "Recall@20": 0.06139605598533292, "NDCG@20": 0.02610495740781837}
+TEST: {"Recall@10": 0.031748870902830566, "NDCG@10": 0.016363877820840672, "Recall@20": 0.051513660957832136, "NDCG@20": 0.021346442841905382}
