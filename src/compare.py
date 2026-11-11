@@ -1,5 +1,6 @@
 """Combine baseline metrics and quantify whether different models help different users."""
 import argparse
+import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -7,7 +8,8 @@ import pandas as pd
 
 def main(out, seed):
     out=Path(out)
-    csvs=[p for p in out.glob('*.csv') if p.name!='baseline_summary.csv']
+    # Only per-model result files (popularity.csv, <model>_seed<k>.csv), not curves or reports.
+    csvs=sorted(p for p in out.glob('*.csv') if p.name=='popularity.csv' or re.fullmatch(r'(deepfm|sasrec|ngcf)_seed\d+\.csv',p.name))
     if csvs:
         summary=pd.concat([pd.read_csv(p) for p in csvs],ignore_index=True)
         summary.to_csv(out/'baseline_summary.csv',index=False)

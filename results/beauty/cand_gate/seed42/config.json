@@ -1,0 +1,71 @@
+{
+  "data": "data/processed_beauty",
+  "scores": "/content/beauty_scores",
+  "score_seed": 42,
+  "out": "results/beauty/cand_gate/seed42",
+  "seed": 42,
+  "split_seed": 0,
+  "fit_fraction": 0.7,
+  "experts": [
+    "deepfm",
+    "sasrec",
+    "ngcf"
+  ],
+  "methods": [
+    "best_single",
+    "equal_weights",
+    "fixed_weights",
+    "per_user_gate",
+    "candidate_gate"
+  ],
+  "norm": "z",
+  "drop_groups": [],
+  "hidden": 32,
+  "dropout": 0.1,
+  "lr": 0.003,
+  "weight_decay": 1e-05,
+  "batch": 128,
+  "epochs": 40,
+  "patience": 5,
+  "hard_negatives": 50,
+  "random_negatives": 100,
+  "overwrite": true,
+  "protocol": "loo2",
+  "split_identity": "3ddaed3d207d",
+  "n_fit_users": 15654,
+  "n_select_users": 6709,
+  "data_stats": {
+    "dataset": "amazon-beauty-5core-2014",
+    "tie_break": "random",
+    "raw_events": 198502,
+    "users": 22363,
+    "items": 12101,
+    "interactions": 198502,
+    "train": 153776,
+    "valid": 22363,
+    "test": 22363,
+    "density_pct": 0.0734,
+    "train_mean_history": 6.88,
+    "train_median_history": 4.0,
+    "train_history_p90": 12.0,
+    "items_with_metadata": 12094,
+    "items_with_brand": 10003,
+    "items_with_price": 11516,
+    "brand_codes": 436,
+    "category_nodes": 203,
+    "subcategories": 6
+  },
+  "info": {
+    "best_single": "sasrec",
+    "per_user_gate": {
+      "best_epoch": 3,
+      "select_NDCG@10": 0.05652932436400462,
+      "n_features": 8
+    },
+    "candidate_gate": {
+      "best_epoch": 6,
+      "select_NDCG@10": 0.05644733060393317,
+      "n_features": 22
+    }
+  }
+}

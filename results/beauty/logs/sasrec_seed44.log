@@ -1,0 +1,18 @@
+device cuda
+sasrec epoch 1/40 loss=8.8750
+sasrec epoch 2/40 loss=8.2993 val Recall@10=0.0471 NDCG@10=0.0242
+sasrec epoch 3/40 loss=7.8223
+sasrec epoch 4/40 loss=7.4686 val Recall@10=0.0797 NDCG@10=0.0430
+sasrec epoch 5/40 loss=7.1859
+sasrec epoch 6/40 loss=6.9505 val Recall@10=0.0898 NDCG@10=0.0498
+sasrec epoch 7/40 loss=6.7526
+sasrec epoch 8/40 loss=6.5920 val Recall@10=0.0906 NDCG@10=0.0521
+sasrec epoch 9/40 loss=6.4592
+sasrec epoch 10/40 loss=6.3511 val Recall@10=0.0903 NDCG@10=0.0515
+sasrec epoch 11/40 loss=6.2644
+sasrec epoch 12/40 loss=6.1938 val Recall@10=0.0880 NDCG@10=0.0504
+sasrec epoch 13/40 loss=6.1310
+sasrec epoch 14/40 loss=6.0792 val Recall@10=0.0872 NDCG@10=0.0497 (early stop)
+best epoch 8 (val NDCG@10=0.0521)
+VALIDATION: {"Recall@10": 0.0905513571524393, "NDCG@10": 0.05213536987843904, "Recall@20": 0.12596699906094888, "NDCG@20": 0.06109709334042319}
+TEST: {"Recall@10": 0.0785672763046103, "NDCG@10": 0.04460410341511742, "Recall@20": 0.11143406519697716, "NDCG@20": 0.052861034052160034}

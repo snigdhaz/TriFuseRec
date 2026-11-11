@@ -4,6 +4,7 @@ python -m src.train --model sasrec --epochs 3
 python -m src.train --model deepfm --epochs 3
 python -m src.train --model ngcf --epochs 3
 python -m src.train --model sasrec --eval-only     # reuse results/sasrec_seed42.pt
+python -m src.train --dataset beauty --model deepfm --init-std 0.01   # Amazon Beauty (data/processed_beauty)
 
 Writes to --out:
   {model}_seed{seed}.csv          validation + test metrics
@@ -20,7 +21,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader,TensorDataset
 from .common import seed_everything, read_data, rank_metrics, seen_matrix, sample_unseen, heldout_splits
-from .models import DeepFM,SASRec,NGCF
+from .models import DeepFM,FieldDeepFM,SASRec,NGCF
 
 
 def features(path,n_users,n_items,device):
@@ -37,6 +38,34 @@ def features(path,n_users,n_items,device):
         for genre in r.genres.split('|'):genre_f[int(r.item_idx),genre_map[genre]]=1
     return (torch.from_numpy(user_f).to(device),torch.from_numpy(genre_f).to(device),
             [len(ages),len(genders),len(jobs),len(genre_names)])
+
+
+def beauty_features(path,n_users,n_items,device):
+    """FieldDeepFM inputs for Amazon Beauty (see src/preprocess_beauty.py): user fields
+    derived from training interactions, item brand / price tier / sub-category codes,
+    and a product-category multi-hot. Returns (user_fields, (item_fields, multi_hot), cards)."""
+    users=pd.read_csv(path/'users.csv').sort_values('user_idx')
+    items=pd.read_csv(path/'items.csv').sort_values('item_idx')
+    assert len(users)==n_users and len(items)==n_items
+    ucols=['activity_code','price_code','subcat_code'];icols=['brand_code','price_code','subcat_code']
+    user_f=users[ucols].to_numpy(dtype=np.int64);item_f=items[icols].to_numpy(dtype=np.int64)
+    cats=items.categories.fillna('').astype(str)
+    names=sorted({c for row in cats for c in row.split('|') if c});cmap={v:k for k,v in enumerate(names)}
+    multi=np.zeros((n_items,len(names)),dtype=np.float32)
+    for idx,row in enumerate(cats):
+        for c in row.split('|'):
+            if c:multi[idx,cmap[c]]=1
+    cards=([int(user_f[:,k].max())+1 for k in range(len(ucols))],
+           [int(item_f[:,k].max())+1 for k in range(len(icols))],len(names))
+    return (torch.from_numpy(user_f).to(device),
+            (torch.from_numpy(item_f).to(device),torch.from_numpy(multi).to(device)),cards)
+
+
+def deepfm_logit(model,u,i,uf,gf):
+    """DeepFM logits for (user, item) pairs; gf is genres (ML-1M) or (item_fields, multi_hot)."""
+    if isinstance(model,FieldDeepFM):
+        item_f,multi=gf;return model(u,i,uf[u],item_f[i],multi[i])
+    f=uf[u];return model(u,i,f[:,0],f[:,1],f[:,2],gf[i])
 
 
 def sequence_rows(histories,max_len):
@@ -78,7 +107,7 @@ def fit(args,model,tr,histories,val_hist,valid,nu,ni,device,uf=None,gf=None):
                 opt.zero_grad()
                 if args.model=='deepfm':
                     u,i,y=[x.to(device) for x in batch]
-                    f=uf[u];logit=model(u,i,f[:,0],f[:,1],f[:,2],gf[i])
+                    logit=deepfm_logit(model,u,i,uf,gf)
                     loss=nn.functional.binary_cross_entropy_with_logits(logit,y)
                 else:
                     seq,y=[x.to(device) for x in batch]
@@ -123,15 +152,15 @@ def score_all(args,model,histories,nu,ni,device,uf=None,gf=None):
         else:
             for s in range(start,end,16):
                 e=min(s+16,end)
-                uu=torch.arange(s,e,device=device).repeat_interleave(ni);ii=items.repeat(e-s);f=uf[uu]
-                scores[s:e]=model(uu,ii,f[:,0],f[:,1],f[:,2],gf[ii]).view(e-s,ni).cpu().numpy()
+                uu=torch.arange(s,e,device=device).repeat_interleave(ni);ii=items.repeat(e-s)
+                scores[s:e]=deepfm_logit(model,uu,ii,uf,gf).view(e-s,ni).cpu().numpy()
     return scores
 
 
 def train(args):
     seed_everything(args.seed)
     path=Path(args.data);output=Path(args.out);output.mkdir(parents=True,exist_ok=True)
-    (output/'scores').mkdir(exist_ok=True)
+    scores_dir=Path(args.scores_dir) if args.scores_dir else output/'scores';scores_dir.mkdir(parents=True,exist_ok=True)
     if args.cpu: device=torch.device('cpu')
     elif torch.cuda.is_available(): device=torch.device('cuda')
     elif torch.backends.mps.is_available(): device=torch.device('mps')
@@ -139,11 +168,14 @@ def train(args):
     print('device',device)
     tr,histories,valid,test,nu,ni=read_data(path)
     uf=gf=None
-    if args.model=='deepfm':
+    if args.model=='deepfm' and args.dataset=='beauty':
+        uf,gf,(ucards,icards,n_multi)=beauty_features(path,nu,ni,device)
+        model=FieldDeepFM(nu,ni,ucards,icards,n_multi,d=args.dim,init_std=args.init_std).to(device)
+    elif args.model=='deepfm':
         uf,gf,cats=features(path,nu,ni,device)
         model=DeepFM(nu,ni,*cats,d=args.dim).to(device)
     elif args.model=='sasrec':
-        model=SASRec(ni,d=args.dim,max_len=args.max_len).to(device)
+        model=SASRec(ni,d=args.dim,max_len=args.max_len,dropout=args.dropout).to(device)
     else:
         model=NGCF(nu,ni,tr[['user_idx','item_idx']].to_numpy(dtype=np.int64),d=args.dim).to(device)
     stem=f'{args.model}_seed{args.seed}'
@@ -172,9 +204,9 @@ def train(args):
             # DeepFM (and NGCF on the train graph) ignore the history: score once.
             if cache is None: cache=score_all(args,model,hist,nu,ni,device,uf,gf)
             scores=cache
-        np.save(output/'scores'/f'{stem}_{split}.npy',scores)
+        np.save(scores_dir/f'{stem}_{split}.npy',scores)
         metrics,top=rank_metrics(scores,truth,hist)
-        rows.append({'model':args.model,'seed':args.seed,'split':split,**metrics,'dim':args.dim,'best_epoch':best_epoch,
+        rows.append({'model':args.model,'dataset':args.dataset,'seed':args.seed,'split':split,**metrics,'dim':args.dim,'best_epoch':best_epoch,
                      'ngcf_infer_graph':args.ngcf_infer_graph if args.model=='ngcf' else None});tops[split]=top
         print(split.upper()+':',json.dumps(metrics))
     pd.DataFrame(rows).to_csv(output/f'{stem}.csv',index=False)
@@ -184,8 +216,9 @@ def train(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--model',required=True,choices=['deepfm','sasrec','ngcf'])
-    p.add_argument('--data',default='data/processed')
-    p.add_argument('--out',default='results')
+    p.add_argument('--dataset',choices=['movielens','beauty'],default='movielens')
+    p.add_argument('--data',default=None,help='default: data/processed (movielens) or data/processed_beauty')
+    p.add_argument('--out',default=None,help='default: results (movielens) or results/beauty')
     p.add_argument('--epochs',type=int,default=3)
     p.add_argument('--seed',type=int,default=42)
     p.add_argument('--dim',type=int,default=32)
@@ -201,4 +234,10 @@ if __name__=='__main__':
     p.add_argument('--ngcf-infer-graph',choices=['train','history'],default='train',
                    help="NGCF scoring graph: 'train' (v1/v2 default) or train + held-out history edges")
     p.add_argument('--eval-only',action='store_true',help='load {model}_seed{seed}.pt instead of training')
-    train(p.parse_args())
+    p.add_argument('--scores-dir',default=None,help='where to save full score matrices (default: <out>/scores)')
+    p.add_argument('--dropout',type=float,default=.1,help='SASRec dropout')
+    p.add_argument('--init-std',type=float,default=None,help='Beauty FieldDeepFM embedding init std (default N(0,1))')
+    a=p.parse_args()
+    a.data=a.data or ('data/processed_beauty' if a.dataset=='beauty' else 'data/processed')
+    a.out=a.out or ('results/beauty' if a.dataset=='beauty' else 'results')
+    train(a)

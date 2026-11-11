@@ -27,14 +27,43 @@ class DeepFM(nn.Module):
         fm=0.5*((stack.sum(1)**2-(stack**2).sum(1)).sum(-1))
         return fm+torch.stack(l,dim=1).sum(1)+self.mlp(torch.cat(e,dim=1)).squeeze(-1)+self.bias
 
+class FieldDeepFM(nn.Module):
+    """Dataset-agnostic DeepFM: user ID, item ID, any number of categorical user/item
+    fields, and one mean-pooled multi-hot item field (genres, product categories, ...).
+    Same FM + linear + MLP structure as DeepFM above.
+    """
+    def __init__(self,n_users,n_items,user_cards,item_cards,n_multi,d=32,init_std=None):
+        super().__init__()
+        cards=[n_users,n_items,*user_cards,*item_cards]
+        self.n_user_fields=len(user_cards)
+        self.embs=nn.ModuleList([nn.Embedding(n,d) for n in cards])
+        self.lin=nn.ModuleList([nn.Embedding(n,1) for n in cards])
+        self.multi=nn.Embedding(max(n_multi,1),d);self.multi_lin=nn.Embedding(max(n_multi,1),1)
+        n_fields=len(cards)+1
+        self.mlp=nn.Sequential(nn.Linear(n_fields*d,128),nn.ReLU(),nn.Linear(128,64),nn.ReLU(),nn.Linear(64,1))
+        self.bias=nn.Parameter(torch.zeros(()))
+        if init_std:
+            # N(0,1) embeddings make the FM pairwise term huge at start (initial BCE ~4.7).
+            for emb in [*self.embs,*self.lin,self.multi,self.multi_lin]:nn.init.normal_(emb.weight,std=init_std)
+    def forward(self,u,i,user_fields,item_fields,multi):
+        ids=[u,i,*user_fields.unbind(-1),*item_fields.unbind(-1)]
+        e=[emb(x) for emb,x in zip(self.embs,ids)]
+        l=[emb(x).squeeze(-1) for emb,x in zip(self.lin,ids)]
+        counts=multi.sum(dim=1,keepdim=True).clamp_min(1.)
+        e.append(multi@self.multi.weight/counts)
+        l.append((multi@self.multi_lin.weight).squeeze(-1)/counts.squeeze(-1))
+        stack=torch.stack(e,dim=1)
+        fm=0.5*((stack.sum(1)**2-(stack**2).sum(1)).sum(-1))
+        return fm+torch.stack(l,dim=1).sum(1)+self.mlp(torch.cat(e,dim=1)).squeeze(-1)+self.bias
+
 class SASRec(nn.Module):
     """Causal Transformer, next-item prediction. Item IDs shifted +1; 0 is padding."""
-    def __init__(self,n_items,d=64,max_len=50,heads=2,layers=2):
+    def __init__(self,n_items,d=64,max_len=50,heads=2,layers=2,dropout=.1):
         super().__init__()
         self.max_len=max_len;self.heads=heads
         self.item=nn.Embedding(n_items+1,d,padding_idx=0)
         self.pos=nn.Embedding(max_len,d)
-        layer=nn.TransformerEncoderLayer(d,heads,dim_feedforward=4*d,dropout=.1,batch_first=True,norm_first=False)
+        layer=nn.TransformerEncoderLayer(d,heads,dim_feedforward=4*d,dropout=dropout,batch_first=True,norm_first=False)
         self.encoder=nn.TransformerEncoder(layer,layers)
         self.norm=nn.LayerNorm(d)
         nn.init.normal_(self.item.weight,std=.02);nn.init.normal_(self.pos.weight,std=.02)

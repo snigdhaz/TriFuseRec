@@ -1,0 +1,18 @@
+== test: mean (std) over seeds; head = top 20% items (2421 items) ==
+       seeds Recall@10        NDCG@10        Recall@20        NDCG@20        HeadShare@10        Coverage@10       
+                  mean    std    mean    std      mean    std    mean    std         mean    std        mean    std
+model                                                                                                              
+deepfm     3    0.0323 0.0006  0.0163 0.0001    0.0525 0.0010  0.0214 0.0001       0.7630 0.1599      0.4870 0.2257
+ngcf       3    0.0413 0.0023  0.0212 0.0015    0.0649 0.0028  0.0271 0.0017       0.7615 0.0124      0.8564 0.0032
+sasrec     3    0.0803 0.0017  0.0457 0.0012    0.1128 0.0012  0.0539 0.0011       0.8409 0.0224      0.5432 0.0179
+
+== per group (mean over seeds) ==
+model                    deepfm   ngcf  sasrec
+group_type group                              
+history    long (7-202)  0.0152 0.0179  0.0587
+           medium (5-6)  0.0173 0.0196  0.0441
+           short (3-4)   0.0166 0.0238  0.0389
+target     head          0.0305 0.0348  0.0755
+           tail          0.0032 0.0086  0.0181
+
+written to results/beauty/analysis/

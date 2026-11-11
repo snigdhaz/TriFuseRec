@@ -1,0 +1,32 @@
+      model dataset  seed      split  Recall@10  NDCG@10  Recall@20  NDCG@20  dim  best_epoch ngcf_infer_graph
+     deepfm  beauty  42.0 validation   0.040200 0.020453   0.064839 0.026616 32.0         4.0              NaN
+     deepfm  beauty  42.0       test   0.032241 0.016258   0.052676 0.021408 32.0         4.0              NaN
+     deepfm  beauty  43.0 validation   0.040826 0.020355   0.066494 0.026781 32.0        12.0              NaN
+     deepfm  beauty  43.0       test   0.033001 0.016368   0.053436 0.021532 32.0        12.0              NaN
+     deepfm  beauty  44.0 validation   0.040692 0.020894   0.061396 0.026105 32.0         8.0              NaN
+     deepfm  beauty  44.0       test   0.031749 0.016364   0.051514 0.021346 32.0         8.0              NaN
+       ngcf  beauty  42.0 validation   0.053347 0.027861   0.082010 0.035047 32.0       100.0            train
+       ngcf  beauty  42.0       test   0.042302 0.021797   0.066807 0.027939 32.0       100.0            train
+       ngcf  beauty  43.0 validation   0.050038 0.025086   0.075884 0.031570 32.0        40.0            train
+       ngcf  beauty  43.0       test   0.038680 0.019451   0.061664 0.025204 32.0        40.0            train
+       ngcf  beauty  44.0 validation   0.053928 0.027507   0.083263 0.034831 32.0       100.0            train
+       ngcf  beauty  44.0       test   0.042883 0.022359   0.066315 0.028237 32.0       100.0            train
+MostPopular     NaN   NaN validation   0.018244 0.009077   0.029781 0.011980  NaN         NaN              NaN
+MostPopular     NaN   NaN       test   0.016635 0.008050   0.026383 0.010492  NaN         NaN              NaN
+     sasrec  beauty  42.0 validation   0.094173 0.053051   0.131557 0.062436 32.0         8.0              NaN
+     sasrec  beauty  42.0       test   0.080401 0.045488   0.113312 0.053797 32.0         8.0              NaN
+     sasrec  beauty  43.0 validation   0.091446 0.052348   0.129231 0.061838 32.0         8.0              NaN
+     sasrec  beauty  43.0       test   0.081966 0.046970   0.113715 0.054958 32.0         8.0              NaN
+     sasrec  beauty  44.0 validation   0.090551 0.052135   0.125967 0.061097 32.0         8.0              NaN
+     sasrec  beauty  44.0       test   0.078567 0.044604   0.111434 0.052861 32.0         8.0              NaN
+
+Top-10 hit overlap:
+    correct_models  users
+              none  19430
+            deepfm    346
+            sasrec   1175
+     deepfm+sasrec    219
+              ngcf    400
+       deepfm+ngcf     81
+       sasrec+ngcf    459
+deepfm+sasrec+ngcf    253
